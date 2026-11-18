@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Reviews</title>
+    <link rel="stylesheet" href="reviews.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+
+        <!-- Login -->
+        <section id="login-section" class="login-box">
+            <h1>Admin login</h1>
+            <input id="email" type="email" placeholder="Email">
+            <input id="password" type="password" placeholder="Password">
+            <button id="login-button">Sign in</button>
+            <p id="login-error" class="error"></p>
+        </section>
+
+        <!-- Reviews -->
+        <section id="reviews-section" hidden>
+            <header class="top-bar">
+                <h1>Reviews <span id="review-count"></span></h1>
+                <button id="logout-button">Sign out</button>
+            </header>
+            <div id="reviews-grid" class="reviews-grid"></div>
+        </section>
+
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+        import { getFirestore, collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+        import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDDJLcHh0LF7Zz4cfq_gDjni42O7lrECWo",
+            authDomain: "dorm-rate-c1.firebaseapp.com",
+            projectId: "dorm-rate-c1",
+            storageBucket: "dorm-rate-c1.firebasestorage.app",
+            messagingSenderId: "771751433438",
+            appId: "1:771751433438:web:d1ba244912270507791e4f",
+            measurementId: "G-SJFZVNWVL2"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+
+        const loginSection = document.getElementById("login-section");
+        const reviewsSection = document.getElementById("reviews-section");
+        const loginError = document.getElementById("login-error");
+        const grid = document.getElementById("reviews-grid");
+        const count = document.getElementById("review-count");
+
+        // Login / logout
+        document.getElementById("login-button").addEventListener("click", async () => {
+            loginError.textContent = "";
+            const email = document.getElementById("email").value;
+            const password = document.getElementById("password").value;
+            try {
+                await signInWithEmailAndPassword(auth, email, password);
+            } catch (error) {
+                console.error(error);
+                loginError.textContent = "Login failed. Check your email and password.";
+            }
+        });
+
+        document.getElementById("logout-button").addEventListener("click", () => signOut(auth));
+
+        // Show the right section depending on login state
+        onAuthStateChanged(auth, (user) => {
+            loginSection.hidden = !!user;
+            reviewsSection.hidden = !user;
+            if (user) loadReviews();
+        });
+
+        async function loadReviews() {
+            grid.innerHTML = "";
+            try {
+                const q = query(collection(db, "reviews"), orderBy("createdAt", "desc"));
+                const snapshot = await getDocs(q);
+                count.textContent = `(${snapshot.size})`;
+
+                if (snapshot.empty) {
+                    grid.textContent = "No reviews yet.";
+                    return;
+                }
+
+                snapshot.forEach((doc) => {
+                    const data = doc.data();
+                    grid.appendChild(createCard(data));
+                });
+            } catch (error) {
+                console.error(error);
+                grid.textContent = "Could not load reviews. Check your Firestore rules and UID.";
+            }
+        }
+
+        // textContent is used (not innerHTML) so reviews can't inject HTML
+        function createCard(data) {
+            const card = document.createElement("article");
+            card.className = "card";
+
+            const dorm = document.createElement("h2");
+            dorm.textContent = data.dorm || "Unknown dorm";
+
+            const text = document.createElement("p");
+            text.textContent = data.text;
+
+            const date = document.createElement("time");
+            date.textContent = data.createdAt
+                ? data.createdAt.toDate().toLocaleString()
+                : "";
+
+            card.append(dorm, text, date);
+            return card;
+        }
+    </script>
+</body>
+</html>
