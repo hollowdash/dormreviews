@@ -1,0 +1,101 @@
+html, body{
+    margin: 0;
+    height: 100%;
+}
+
+body{
+    height: 100vh;
+    overflow: hidden;
+    font-family: Montserrat, sans-serif;
+    background:
+        linear-gradient(rgba(15, 15, 15, 0.5), rgba(15, 15, 15, 0.5)),
+        url('astate.jpg') center top / auto 100% no-repeat;
+}
+
+.container{
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.main-screen{
+    background-color: rgb(45, 45, 45);
+
+    width: 80%;
+    max-width: 500px;
+    padding: 30px;
+    box-sizing: border-box;
+    border-radius: 20px;
+
+    color: white;
+    text-align: center;
+}
+
+#start-button{
+    background: white;
+    padding: 10px 50px 10px 50px;
+    border-radius: 20px;
+    border: none;
+    font-family: Montserrat, sans-serif;
+
+    transition: background 0.1s ease-out;
+}
+#start-button:hover{
+    background: rgb(160, 160, 160);
+}
+
+.dorm-options{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;   /* centers the last row if it's not full */
+    gap: 10px;
+}
+
+.dorm-options button{
+    flex: 0 0 calc((100% - 20px) / 3);   /* 3 columns: subtract the two 10px gaps, divide by 3 */
+    padding: 12px 8px;
+    border-radius: 20px;
+    border-color: transparent;
+    transition: color 0.1s ease-out;
+}
+.dorm-options button:hover{
+    background-color: rgb(160, 160, 160);
+}
+
+.page-dorm-review p {
+    color: gray;
+    size: 3vw;
+    padding-bottom: 20px;
+}
+.page-dorm-review input {
+    width: 100%;
+    padding-bottom: 100px;
+    border-radius: 20px;
+}
+.page-dorm-review button{
+    background: white;
+    padding: 10px 50px 10px 50px;
+    border-radius: 20px;
+    border: none;
+    font-family: Montserrat, sans-serif;
+    
+    transition: background 0.1s ease-out;
+}
+.page-dorm-review button:hover{
+    background-color: rgb(160, 160, 160);
+}
+.input-fields{
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+.page {
+    display: none;
+}
+
+.page.active {
+    display: block; /* or flex, if your pages use flex layout */
+}

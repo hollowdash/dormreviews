@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Campus Housing Feedback</title>
+    <link rel="stylesheet" href="index.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <div class="main-screen">
+
+            <div class="page page-welcome active">
+                <h1>Thanks for checking this out!</h1>
+                <p>Would you like to help and leave your opinion about housing on campus? Click the button to leave a quick bit of info!</p>
+                <button id="start-button">Start</button>
+            </div>
+
+            <div class="page page-select-dorm">
+                <h1>Which dorm are you living in?</h1>
+                <div class="dorm-options">
+                    <button>Arkansas Hall</button>
+                    <button>Kays Hall</button>
+                    <button>University Hall</button>
+                    <button>North Park Quads</button>
+                    <button>Honors Living-Learning Community</button>
+                    <button>Neil Griffin College of Business Living-Learning Community</button>
+                    <button>ROTC Living-Learning Community</button>
+                    <button>STEM Living-Learning Community</button>
+                </div>
+            </div>
+
+            <div class="page page-dorm-review">
+                <h1>What would you like to say?</h1>
+                <p>Don't worry, it's entirely anonymous and will only be seen by me.</p>
+                <div class="input-fields">
+                    <input id="review-input">
+                    <button id="submit-button">Submit</button>
+                </div>
+            </div>
+
+            <div class="page page-thank-you">
+                <h1>Thank you!</h1>
+                <p>I appreciate you taking the time to do this. Have a nice day! :)</p>
+            </div>
+
+        </div>
+    </div>
+
+    <script type="module" src="index.js"></script>
+</body>
+</html>
