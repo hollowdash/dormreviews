@@ -34,7 +34,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
-        import { getFirestore, collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+        import { getFirestore, collection, getDocs, query, orderBy, doc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
         import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
 
         const firebaseConfig = {
@@ -56,6 +56,8 @@
         const loginError = document.getElementById("login-error");
         const grid = document.getElementById("reviews-grid");
         const count = document.getElementById("review-count");
+
+        const cfw = "https://ancient-snowflake-fe09.coltonscottt.workers.dev";
 
         // Login / logout
         document.getElementById("login-button").addEventListener("click", async () => {
@@ -91,9 +93,8 @@
                     return;
                 }
 
-                snapshot.forEach((doc) => {
-                    const data = doc.data();
-                    grid.appendChild(createCard(data));
+                snapshot.forEach((docSnap) => {
+                    grid.appendChild(createCard(docSnap.id, docSnap.data()));
                 });
             } catch (error) {
                 console.error(error);
@@ -102,7 +103,7 @@
         }
 
         // textContent is used (not innerHTML) so reviews can't inject HTML
-        function createCard(data) {
+        function createCard(id, data) {
             const card = document.createElement("article");
             card.className = "card";
 
@@ -112,13 +113,55 @@
             const text = document.createElement("p");
             text.textContent = data.text;
 
+            const footer = document.createElement("div");
+            footer.className = "card-footer";
+
             const date = document.createElement("time");
             date.textContent = data.createdAt
                 ? data.createdAt.toDate().toLocaleString()
                 : "";
 
-            card.append(dorm, text, date);
+            const deleteButton = document.createElement("button");
+            deleteButton.className = "delete-button";
+            deleteButton.textContent = "Delete";
+            deleteButton.addEventListener("click", () => deleteReview(id, data, card, deleteButton));
+
+            footer.append(date, deleteButton);
+            card.append(dorm, text, footer);
             return card;
+        }
+
+        async function deleteReview(id, data, card, button) {
+            if (!confirm("Delete this review? This can't be undone.")) return;
+
+            button.disabled = true;
+            button.textContent = "Deleting...";
+
+            try {
+                await deleteDoc(doc(db, "reviews", id));
+
+                // Notify Discord via the Worker (not awaited, failures are ignored)
+                fetch(cfw, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        type: "delete",
+                        dorm: data.dorm || "Unknown dorm",
+                        text: data.text
+                    })
+                }).catch(err => console.error("Discord notify failed:", err));
+
+                card.remove();
+
+                const remaining = grid.querySelectorAll(".card").length;
+                count.textContent = `(${remaining})`;
+                if (remaining === 0) grid.textContent = "No reviews yet.";
+            } catch (error) {
+                console.error("Could not delete review:", error);
+                button.disabled = false;
+                button.textContent = "Delete";
+                alert("Could not delete the review. Check your Firestore rules. " + error);
+            }
         }
     </script>
 </body>

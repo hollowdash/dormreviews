@@ -100,10 +100,36 @@ button:hover {
     overflow-wrap: anywhere;
 }
 
-.card time {
+.card-footer {
     margin-top: auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+}
+
+.card time {
     font-size: 0.8rem;
     color: #6b7280;
+}
+
+.delete-button {
+    padding: 6px 12px;
+    font-size: 0.8rem;
+    background: transparent;
+    color: #b91c1c;
+    border: 1px solid #b91c1c;
+}
+
+.delete-button:hover {
+    background: #b91c1c;
+    color: white;
+    opacity: 1;
+}
+
+.delete-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
 }
 
 [hidden] {

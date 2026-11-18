@@ -13,7 +13,6 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
-const cfw = "https://ancient-snowflake-fe09.coltonscottt.workers.dev"
 
 let selectedDorm = null;
 const pages = document.querySelectorAll(".page");
@@ -37,20 +36,13 @@ document.querySelectorAll(".dorm-options button").forEach(button => {
 document.getElementById("submit-button").addEventListener("click", async () => {
     const text = document.getElementById("review-input").value.trim();
     if (!text) return;
- 
+
     try {
         await addDoc(collection(db, "reviews"), {
             dorm: selectedDorm,
             text: text,
             createdAt: serverTimestamp()
         });
- 
-        fetch(cfw, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ dorm: selectedDorm, text: text })
-        }).catch(err => console.error("Discord notify failed:", err));
- 
         showPage("page-thank-you");
     } catch (error) {
         console.error("Could not save review:", error);
